@@ -6,7 +6,8 @@ void main() {
   group('AsyncValueSelector', () {
     test('should compute initial value correctly', () async {
       final valueNotifier = ValueNotifier<int>(1);
-      final selector = AsyncValueSelector<int>(0, (get) async => get(valueNotifier) + 1);
+      final selector =
+          AsyncValueSelector<int>(0, (get) async => get(valueNotifier) + 1);
 
       await selector.isReady;
       expect(selector.value, 2);
@@ -14,17 +15,20 @@ void main() {
 
     test('should update value when dependent notifiers change', () async {
       final valueNotifier = ValueNotifier<int>(1);
-      final selector = AsyncValueSelector<int>(0, (get) async => get(valueNotifier) + 1);
+      final selector =
+          AsyncValueSelector<int>(0, (get) async => get(valueNotifier) + 1);
 
       await selector.isReady;
       valueNotifier.value = 2;
-      await Future.delayed(Duration.zero); // Allow notifyListeners to be processed
+      await Future.delayed(
+          Duration.zero); // Allow notifyListeners to be processed
       expect(selector.value, 3);
     });
 
     test('should notify listeners on value change', () async {
       final valueNotifier = ValueNotifier<int>(1);
-      final selector = AsyncValueSelector<int>(0, (get) async => get(valueNotifier) + 1);
+      final selector =
+          AsyncValueSelector<int>(0, (get) async => get(valueNotifier) + 1);
 
       await selector.isReady;
 
@@ -34,14 +38,16 @@ void main() {
       });
 
       valueNotifier.value = 2;
-      await Future.delayed(Duration.zero); // Allow notifyListeners to be processed
+      await Future.delayed(
+          Duration.zero); // Allow notifyListeners to be processed
       expect(listenerCallCount, 1);
       expect(selector.value, 3);
     });
 
     test('should dispose correctly', () async {
       final valueNotifier = ValueNotifier<int>(1);
-      final selector = AsyncValueSelector<int>(0, (get) async => get(valueNotifier) + 1);
+      final selector =
+          AsyncValueSelector<int>(0, (get) async => get(valueNotifier) + 1);
 
       await selector.isReady;
       selector.dispose();

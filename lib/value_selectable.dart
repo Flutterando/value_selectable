@@ -6,10 +6,8 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 
 /// Abstract class for a selectable value, extending ChangeNotifier.
-abstract class ValueSelectable<T> extends ChangeNotifier {
-  /// The current value of the selectable.
-  T get value;
-}
+abstract class ValueSelectable<T> extends ChangeNotifier
+    implements ValueListenable<T> {}
 
 /// A selector that computes a synchronous value based on a given scope.
 class ValueSelector<T> extends ValueSelectable<T> {
