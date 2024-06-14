@@ -1,6 +1,10 @@
 # ValueSelectable
 
+
+![image](https://github.com/Flutterando/value_selectable/blob/main/assets/image.png?raw=true)
+
 A Flutter package that provides computed values for `ValueNotifier`, inspired by the Selectors from Recoil.
+
 
 ## Overview
 

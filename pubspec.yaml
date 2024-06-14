@@ -1,10 +1,10 @@
 name: value_selectable
-description: "A new Flutter project."
+description: "A Flutter package that provides computed values for `ValueNotifier`, inspired by the Selectors from Recoil."
 
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 
 dependencies:
