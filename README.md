@@ -77,6 +77,35 @@ void main() async {
 
 ```
 
+## Advance Usage
+
+As classes `ValueSelectable` trabalham devirando valores de outros `ValueListenable`, mas isso
+também pode ser feito por meio de ações utilizando o setter do `value` de um `ValueSelectable`.
+Note que ao alterar esse `value` nada acontecerá se a função `set` não for implementada no construtor de uma das classes do `ValueSelectable`.
+
+Com isso em mente poderemos fazer derivações utilizando ações de uma forma parecida com um `Reducer`:
+
+```dart
+  final counterState = ValueNotifier<int>(0);
+
+  final selectorState = ValueSelector<int>(
+    (get) => get(counterState) + 1,
+    (action) {
+      if (action == 'INCREMENT') counterState.value++;
+      if (action == 'DECREMENT') counterState.value--;
+    },
+  );
+
+  // directly change
+  counterState.value = 1;
+
+  // indirectly change
+  selectorState.value = 'INCREMENT';
+  selectorState.value = 'DECREMENT';
+
+```
+
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
