@@ -3,7 +3,8 @@ part of '../value_selectable.dart';
 /// A selector that computes an asynchronous value based on a given scope.
 class AsyncValueSelector<T> extends ValueSelectable<T> {
   final FutureOr<T> Function(GetValue get) scope;
-  final FutureOr<void> Function(dynamic action)? _set;
+  final Function? _set;
+  late final bool kActionWithArguments;
 
   final Queue<FutureOr Function()> _requestQueue = Queue();
   bool _isProcessing = false;
@@ -36,12 +37,21 @@ class AsyncValueSelector<T> extends ValueSelectable<T> {
 
   set value(dynamic newValue) {
     _initialize();
-    _requestQueue.add(() => _set?.call(newValue));
+    if (_set == null) return;
+    _requestQueue.add(() {
+      Function.apply(_set!, kActionWithArguments ? [newValue] : []);
+    });
     _processQueue();
   }
 
   /// Constructs an AsyncValueSelector with an initial value and a scope function.
-  AsyncValueSelector(this._value, this.scope, [this._set]);
+  AsyncValueSelector(this._value, this.scope, [this._set]) {
+    if (_set != null) {
+      var funcText = _set.runtimeType.toString();
+      assert(!funcText.contains(','), 'Function must have one argument.');
+      kActionWithArguments = !funcText.startsWith('() =>');
+    }
+  }
 
   /// Processes the request queue, ensuring only one request is processed at a time.
   Future<void> _processQueue() async {

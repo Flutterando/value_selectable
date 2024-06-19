@@ -8,7 +8,7 @@ void main() {
 
     final selectorState = ValueSelector<int>(
       (get) => get(counterState) + 1,
-      (action) {
+      (String action) {
         if (action == 'INCREMENT') counterState.value++;
         if (action == 'DECREMENT') counterState.value--;
       },
@@ -27,5 +27,28 @@ void main() {
 
     await Future.delayed(const Duration(seconds: 1));
     selectorState.dispose();
+  });
+
+  test('ValueSelectable throw assert if reducer has more one arguments', () async {
+    expect(() {
+      return ValueSelector<int>(
+        (get) => 1,
+        (String action, int id) {},
+      );
+    }, throwsAssertionError);
+  });
+
+  test('ValueSelectable action zero arguments', () async {
+    ValueSelector<int>(
+      (get) => 1,
+      () {},
+    );
+  });
+
+  test('ValueSelectable action one arguments', () async {
+    ValueSelector<int>(
+      (get) => 1,
+      (String action) {},
+    );
   });
 }
