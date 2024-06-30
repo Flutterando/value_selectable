@@ -11,7 +11,6 @@ A Flutter package that provides computed values for `ValueNotifier`, inspired by
 This package includes two main classes:
 
 - `ValueSelector`: Computes a synchronous value based on a given scope.
-- `AsyncValueSelector`: Computes an asynchronous value based on a given scope.
 
 These classes allow you to create computed values that automatically update when their dependencies change, providing a reactive programming model similar to Recoil selectors.
 
