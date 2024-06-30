@@ -29,6 +29,8 @@ void main() {
   });
 
   test('Listen other notifiers after the first value', () {
+    final mockCallback = Param1Callback<bool>();
+
     final nameState = ValueNotifier('Deivão');
     final ageState = ValueNotifier(15);
 
@@ -38,29 +40,45 @@ void main() {
       return false;
     });
 
-    canAccess.addListener(() => print('Can access: ${canAccess.value}'));
+    canAccess.addListener(() => mockCallback.call(canAccess.value));
 
     // Return false
     nameState.value = "Jacob";
 
     // Return true (doesn't work)
     ageState.value = 18;
+
+    expect(mockCallback, orderedEquals([false, true]));
   });
 
-  test('Do not emmit repeated values', () {
+  test('Do not emit repeated values', () {
+    final mockCallback = Param1Callback<bool>();
+
     final nameState = ValueNotifier('Jacob');
     final ageState = ValueNotifier(17);
 
     final canAccess = ValueSelector((get) {
-      print('scope');
       if (get(nameState) == 'Deivão') return true;
       if (get(ageState) >= 18) return true;
       return false;
     });
 
-    canAccess.addListener(() => print('Can access: ${canAccess.value}'));
+    canAccess.addListener(() => mockCallback.call(canAccess.value));
 
     nameState.value = "Deivão";
     ageState.value = 17;
+    ageState.value = 16;
+
+    expect(mockCallback, orderedEquals([true]));
   });
+}
+
+class Param1Callback<T> extends Iterable<T> {
+  final _callStack = <T>[];
+  void call(T value) {
+    _callStack.add(value);
+  }
+
+  @override
+  Iterator<T> get iterator => _callStack.iterator;
 }
