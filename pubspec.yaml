@@ -2,7 +2,7 @@ name: value_selectable
 description: "A Flutter package that provides computed values for `ValueNotifier`, inspired by the Selectors from Recoil."
 repository: https://github.com/Flutterando/value_selectable
 
-version: 1.1.1
+version: 2.0.0
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
