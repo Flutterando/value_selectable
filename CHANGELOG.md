@@ -1,3 +1,9 @@
+# 2.0.0
+
+- Remove AsyncValueSelector
+- Remove set
+- Fix get funciont
+
 # 1.1.1
 
 - FIX: Action callback;
