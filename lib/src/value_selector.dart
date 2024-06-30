@@ -1,44 +1,63 @@
-part of '../value_selectable.dart';
+import 'package:flutter/foundation.dart';
 
 /// A selector that computes a synchronous value based on a given scope.
-class ValueSelector<T> extends ValueSelectable<T> {
+class ValueSelector<T> extends ChangeNotifier implements ValueListenable<T> {
   final T Function(GetValue get) scope;
-  final Function? _set;
-  late final bool kActionWithArguments;
   late T _value;
+  final _listenables = <Listenable>{};
 
   @override
   T get value => _value;
 
-  set value(dynamic newValue) {
-    if (_set != null) {
-      Function.apply(_set!, kActionWithArguments ? [newValue] : []);
+  late final _get = GetValue._(onListenableIdentified);
+
+  void onListenableIdentified(Listenable listenable) {
+    if (_listenables.add(listenable)) {
+      listenable.addListener(notifyListeners);
     }
   }
 
-  late final _get = GetValue._(notifyListeners);
-
   /// Constructs a ValueSelector with an initial value and a scope function.
-  ValueSelector(this.scope, [this._set]) {
-    if (_set != null) {
-      var funcText = _set.runtimeType.toString();
-      assert(!funcText.contains(','), 'Function must have one argument.');
-      kActionWithArguments = !funcText.startsWith('() =>');
-    }
-
+  ValueSelector(this.scope) {
     _value = scope(_get);
-    _get._tracking = false;
   }
 
   @override
   void notifyListeners() {
-    _value = scope(_get);
+    _listenables.clear();
+    final newValue = scope(_get);
+
+    if (newValue == _value) return;
+    _value = newValue;
     super.notifyListeners();
   }
 
   @override
   void dispose() {
     _get.dispose();
+    for (var listenable in _listenables) {
+      listenable.removeListener(notifyListeners);
+    }
     super.dispose();
+  }
+}
+
+/// Helper class to manage value dependencies and tracking for selectors.
+final class GetValue {
+  final void Function(Listenable listenable) _selectorIdentifyListenable;
+  GetValue._(this._selectorIdentifyListenable);
+
+  bool _isDisposed = false;
+
+  /// Registers a notifier and returns its value.
+  R call<R>(ValueListenable<R> notifier) {
+    if (_isDisposed) throw Exception('It is disposed');
+    _selectorIdentifyListenable.call(notifier);
+    return notifier.value;
+  }
+
+  /// Disposes of all registered listeners.
+  void dispose() {
+    _isDisposed = true;
   }
 }
